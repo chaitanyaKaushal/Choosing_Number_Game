@@ -1,1 +1,1 @@
-![Choose a Number Demo](myApp1.gif)
+![Choose a Number Demo](myApp.gif)
