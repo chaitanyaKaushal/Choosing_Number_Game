@@ -1,4 +1,5 @@
 export default {
-    accent:'',
-    primary:'green',
+  accent: "",
+  primary: "green",
+  highlight: "crimson",
 };
