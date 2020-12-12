@@ -1,2 +1,3 @@
-# Choosing_Number_Game
-A user-interactive game application made in React-Native where the computer guesses for the number picked up by the user.
+KINDLY ZOOM OUT to see the demo properly...................
+
+![Choose a Number Demo](myApp.gif)
