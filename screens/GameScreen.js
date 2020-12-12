@@ -7,6 +7,7 @@ import {
   Alert,
   ScrollView,
   FlatList,
+  Dimensions,
 } from "react-native";
 import NumberContainer from "../components/NumberContainer";
 import Card from "../components/Card";
@@ -44,6 +45,24 @@ const GameScreen = (props) => {
     }
   }, [props.userChoice, props.onGameOver, currentGuess]); //on a re-render if no element is changed in dependency list,then, useEffect would not run
 
+  const [dimensions, setDimensions] = useState({
+    height: Dimensions.get("window").height,
+    width: Dimensions.get("window").width,
+  });
+
+  useEffect(() => {
+    const onChange = () => {
+      setDimensions({
+        height: Dimensions.get("window").height,
+        width: Dimensions.get("window").width,
+      });
+    };
+    Dimensions.addEventListener("change", onChange);
+    return () => {
+      Dimensions.removeEventListener("change", onChange);
+    };
+  });
+
   const nextGuessHandler = (direction) => {
     //first let us validate
     if (
@@ -74,12 +93,18 @@ const GameScreen = (props) => {
   };
 
   return (
+    // <ScrollView>
     <View style={styles.screen}>
       <Text style={{ ...BodyStyling.title, ...styles.titleColor }}>
         Opponent's Guess
       </Text>
       <NumberContainer>{currentGuess}</NumberContainer>
-      <Card style={styles.btnContainer}>
+      <Card
+        style={{
+          ...styles.btnContainer,
+          marginTop: dimensions.height > 600 ? 20 : 5,
+        }}
+      >
         {/* <Button title="LOWER" onPress={nextGuessHandler.bind(this, "lower")} /> */}
         {/* <Button
           title="HIGHER"
@@ -92,7 +117,12 @@ const GameScreen = (props) => {
           <Ionicons name="md-add" size={24} color="white" />
         </MainButton>
       </Card>
-      <View style={styles.listContainer}>
+      <View
+        style={{
+          ...styles.listContainer,
+          width: dimensions.width > 350 ? "60%" : "80%",
+        }}
+      >
         {/* <ScrollView contentContainerStyle={styles.list}>
           {pastGuesses.map((guess, index) =>
             renderListItem(guess, pastGuesses.length - index)
@@ -106,6 +136,7 @@ const GameScreen = (props) => {
         />
       </View>
     </View>
+    // </ScrollView>
   );
 };
 //styles the list items
@@ -127,7 +158,7 @@ const styles = StyleSheet.create({
   btnContainer: {
     flexDirection: "row",
     justifyContent: "space-around",
-    marginTop: 20,
+    // marginTop: Dimensions.get("window").height > 600 ? 20 : 5,
     width: 400,
     maxWidth: "90%",
   },
@@ -145,7 +176,7 @@ const styles = StyleSheet.create({
     width: "100%", // for scrollview 60%
   },
   listContainer: {
-    width: "60%", //for scrollView 80%
+    // width: Dimensions.get("window").width > 350 ? "60%" : "80%", //for scrollView 60% -> 80%
     flex: 1,
   },
   list: {

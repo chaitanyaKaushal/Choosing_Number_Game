@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   StyleSheet,
@@ -8,6 +8,9 @@ import {
   TouchableWithoutFeedback,
   Keyboard, //Api
   Alert, // Api
+  Dimensions,
+  ScrollView,
+  KeyboardAvoidingView,
 } from "react-native";
 import Card from "../components/Card";
 import Colors from "../constants/colors";
@@ -19,6 +22,24 @@ const StartGameScreen = (props) => {
   const [enteredValue, setEnteredValue] = useState("");
   const [confirmed, setConfirmed] = useState(false);
   const [selectedNumber, setSelectedNumber] = useState();
+
+  const [dimensions, setDimensions] = useState({
+    height: Dimensions.get("window").height,
+    width: Dimensions.get("window").width,
+  });
+
+  useEffect(() => {
+    const onChange = () => {
+      setDimensions({
+        height: Dimensions.get("window").height,
+        width: Dimensions.get("window").width,
+      });
+    };
+    Dimensions.addEventListener("change", onChange);
+    return () => {
+      Dimensions.removeEventListener("change", onChange);
+    };
+  });
 
   const numberedInputHandler = (inputText) => {
     setEnteredValue(inputText.replace(/[^0-9]/g, ""));
@@ -67,46 +88,50 @@ const StartGameScreen = (props) => {
     //     Keyboard.dismiss();
     //   }}
     // >
-    <TouchableWithoutFeedback
-      onPress={() => {
-        Keyboard.dismiss();
-      }}
-    >
-      <View style={styles.screen}>
-        <Text style={styles.title}>Start a New Game</Text>
-        <Card style={styles.inputContainer}>
-          <Text style={{ fontFamily: "open-sans" }}>Enter a Number</Text>
-          <Input
-            style={styles.input}
-            blurOnSubmit
-            autoCapitalize="none"
-            autoCorrect={false}
-            keyboardType="number-pad"
-            maxLength={2}
-            multiline={true}
-            onChangeText={numberedInputHandler}
-            value={enteredValue}
-          />
-          <View style={styles.btnContainer}>
-            <View style={styles.btn}>
-              <Button
-                title="Reset"
-                color={Colors.accent}
-                onPress={resetInputHandler}
+    <ScrollView>
+      <KeyboardAvoidingView behavior="position" keyboardVerticalOffset={30}>
+        <TouchableWithoutFeedback
+          onPress={() => {
+            Keyboard.dismiss();
+          }}
+        >
+          <View style={styles.screen}>
+            <Text style={styles.title}>Start a New Game</Text>
+            <Card style={styles.inputContainer}>
+              <Text style={{ fontFamily: "open-sans" }}>Enter a Number</Text>
+              <Input
+                style={styles.input}
+                blurOnSubmit
+                autoCapitalize="none"
+                autoCorrect={false}
+                keyboardType="number-pad"
+                maxLength={2}
+                multiline={true}
+                onChangeText={numberedInputHandler}
+                value={enteredValue}
               />
-            </View>
-            <View style={styles.btn}>
-              <Button
-                color={Colors.primary}
-                title="Confirm"
-                onPress={confirmInputHandler}
-              />
-            </View>
+              <View style={styles.btnContainer}>
+                <View style={{ width: dimensions.width / 4 }}>
+                  <Button
+                    title="Reset"
+                    color={Colors.accent}
+                    onPress={resetInputHandler}
+                  />
+                </View>
+                <View style={{ width: dimensions.width / 4 }}>
+                  <Button
+                    color={Colors.primary}
+                    title="Confirm"
+                    onPress={confirmInputHandler}
+                  />
+                </View>
+              </View>
+            </Card>
+            {confirmedOutput}
           </View>
-        </Card>
-        {confirmedOutput}
-      </View>
-    </TouchableWithoutFeedback>
+        </TouchableWithoutFeedback>
+      </KeyboardAvoidingView>
+    </ScrollView>
   );
 };
 
@@ -123,8 +148,9 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     alignItems: "center",
-    width: 300,
-    maxWidth: "80%",
+    width: "80%",
+    minWidth: 300,
+    maxWidth: "95%",
   },
   btnContainer: {
     flexDirection: "row",
@@ -133,9 +159,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     alignItems: "center",
   },
-  btn: {
-    width: "40%",
-  },
+  // btn: {
+  //   // width: "40%",
+  //   width: Dimensions.get("window").width / 4,
+  // },
   input: {
     width: 50,
     textAlign: "center",
