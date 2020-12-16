@@ -91,7 +91,47 @@ const GameScreen = (props) => {
       ...curPastGuesses,
     ]); // pehle newGuess because sabse upar display hoga list mein
   };
-
+  if(dimensions.height < 500){
+    return (
+    <View style={styles.screen}>
+      <Text style={{ ...BodyStyling.title, ...styles.titleColor }}>
+        Opponent's Guess
+      </Text>
+      <View style = {styles.controls}>
+      <MainButton onPress={nextGuessHandler.bind(this, "lower")}>
+      <Ionicons name="md-remove" size={24} color="white" />
+      </MainButton>
+      <NumberContainer>{currentGuess}</NumberContainer>
+        {/* <Button title="LOWER" onPress={nextGuessHandler.bind(this, "lower")} /> */}
+        {/* <Button
+          title="HIGHER"
+          onPress={nextGuessHandler.bind(this, "higher")}
+        /> */}
+        <MainButton onPress={nextGuessHandler.bind(this, "higher")}>
+          <Ionicons name="md-add" size={24} color="white" />
+        </MainButton>
+        </View>
+      <View
+        style={{
+          ...styles.listContainer,
+          width: dimensions.width > 350 ? "60%" : "80%",
+        }}
+      >
+        {/* <ScrollView contentContainerStyle={styles.list}>
+          {pastGuesses.map((guess, index) =>
+            renderListItem(guess, pastGuesses.length - index)
+          )}
+        </ScrollView> */}
+        <FlatList
+          contentContainerStyle={styles.list}
+          data={pastGuesses}
+          keyExtractor={(item) => item}
+          renderItem={renderListItem.bind(this, pastGuesses.length)}
+        />
+      </View>
+    </View>
+    );
+  }
   return (
     // <ScrollView>
     <View style={styles.screen}>
@@ -164,6 +204,12 @@ const styles = StyleSheet.create({
   },
   titleColor: {
     color: "black",
+  },
+  controls:{
+    flexDirection : 'row',
+    width:'80%',
+    justifyContent:'space-around',
+    alignItems: 'center'
   },
   listItem: {
     borderColor: "#ccc",
